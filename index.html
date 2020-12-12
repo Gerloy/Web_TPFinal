@@ -26,7 +26,7 @@
       <!-- tp1 -->
       <div class= "row">
         <div class="col s12">
-          <h4 class="white-text">TP1: Círculo cromático</h4>
+          <h4 class="white-text center-align">TP1: Círculo cromático</h4>
         </div>
       </div>
       <div class="row">
@@ -133,7 +133,7 @@ translate(0,height/3);</pre></div>
       <!-- tp2 -->
       <div class= "row">
         <div class="col s12">
-          <h4 class="white-text align-center">TP2: Secuencia de créditos</h4>
+          <h4 class="white-text center-align">TP2: Secuencia de créditos</h4>
         </div>
       </div>
       <div class="row">
@@ -148,7 +148,46 @@ translate(0,height/3);</pre></div>
               </li>
               <li>
                 <div class="collapsible-header">Código</div>
-                <div class="collapsible-body cola"><pre>Jorgito</pre></div>
+                <div class="collapsible-body cola"><pre>PImage Fondo;
+PFont Fuente,Fuente_Titulo;
+int X,Y,Vel,Dif,Dif_Tit;
+void setup(){
+  size(512,480);
+  frameRate(3);
+  surface.setTitle("TP2 Final Fantasy (click para reiniciar)");
+  textAlign(CENTER,TOP);
+  Fuente = createFont("DiaryOfAn8BitMage-lYDD.ttf",24);
+  Fuente_Titulo = createFont("final_fantasy_36_font.ttf",24);
+  Fondo = loadImage("Fondito_FF.png");
+  X = 208;
+  Y = 256;
+  Dif = 70;
+  Dif_Tit = 172;
+  Vel = 5;
+}
+
+void draw(){
+  background(0,0,128);
+  textFont(Fuente_Titulo);
+  textSize(50);
+  text("Final Fantasy",X,Y);
+  textFont(Fuente);
+  textSize(14);
+  text("Designer & Original Concept\nHironobu Sakaguchi",X,Y+Dif_Tit);
+  text("Scenario\nKenji Terada",X,Y+Dif_Tit+Dif);
+  text("Battle System Design, Debugger\nHiroyuki Itou",X,Y+Dif_Tit+Dif*2);
+  text("Programmer\nNasir Gebelli",X,Y+Dif_Tit+Dif*3);
+  text("Character Design\nYoshitaka Amano",X,Y+Dif_Tit+Dif*4);
+  text("OST Composer\nNobuo Uematsu",X,Y+Dif_Tit+Dif*5);
+  text("Production\n Square A-Team",X,Y+Dif_Tit+Dif*6);
+  text("Executive Producer\nHisashi Suzuki",X,Y+Dif_Tit+Dif*7);
+  image (Fondo,0,0,width,height);
+  Y-=Vel;
+}
+
+void mouseClicked(){
+  Y = 256;
+}</pre></div>
               </li>
             </ul>
           </div>
