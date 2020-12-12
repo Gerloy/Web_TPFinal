@@ -5,8 +5,7 @@ html{
 }
 body{
     background-color: #00252F;
-    vertical-align: middle;
-    display: table-cell;
+      display: table-cell;
 }
 
 .cont {
@@ -23,4 +22,5 @@ body{
 
 .frame{
   text-align: center;
+  vertical-align: middle;
 }
