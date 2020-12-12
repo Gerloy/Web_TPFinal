@@ -1,5 +1,13 @@
+html{
+    width: 100%;
+    height: 100%;
+    display: table;
+}
 body{
-  background-color: #00252F;
+    background-color: #00252F;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
 }
 
 .cont {
@@ -12,4 +20,8 @@ body{
 
 .txt {
   font-size: 15px;
+}
+
+.frame{
+
 }
