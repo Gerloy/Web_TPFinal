@@ -5,13 +5,12 @@ html{
 }
 body{
     background-color: #00252F;
-    text-align: center;
     vertical-align: middle;
     display: table-cell;
 }
 
 .cont {
-  background-color: #00000070;
+  background-color: #00000025;
 }
 
 .cola {
@@ -23,5 +22,5 @@ body{
 }
 
 .frame{
-
+  text-align: center;
 }
