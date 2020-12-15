@@ -193,7 +193,13 @@ void mouseClicked(){
             </ul>
           </div>
       </div>
-      <!-- tp2 -->
+      <!-- espacio -->
+      <div class="row">
+        <div class="col s12">
+          <h1 class="transparent-text"> wasd</h1>
+        </div>
+      </div>
+      <!-- tp4 -->
       <div class= "row">
         <div class="col s12">
           <h4 class="white-text center-align">TP4: Aventura con funciones</h4>
@@ -432,7 +438,7 @@ void mousePressed(){
 }
 
 void Mouse_Menu(){
-  if (((mouseX>=PosX1) &&(mouseX<=PosX1+TamX1)) &&
+  if (((mouseX>=PosX1) && (mouseX<=PosX1+TamX1)) &&
    ((mouseY>=PosY1) && (mouseY<=PosY1+TamY1))){
     pantalla=0;
     iniciado=true;
@@ -542,7 +548,7 @@ void Mouse_FundidoNegro(){
 }
 
 void Mouse_Pantalla_Chobi(){
-  if(cant22<4){
+  if(cant22 < 4){
     cant22++;
   }else{
     if(pantalla==41){
@@ -1001,7 +1007,7 @@ void Cargar(){
   Texto_Normal = loadStrings("Textos.txt");
   Texto_Decisiones = loadStrings("Decisiones.txt");
   cargado = true;
-}</pre></div>
+}</primer></div>
                 </li>
                 </ul>
                 </div>
@@ -1009,6 +1015,654 @@ void Cargar(){
             </ul>
           </div>
       </div>
+      <!-- espacio -->
+      <div class="row">
+        <div class="col s12">
+          <h1 class="transparent-text"> wasd</h1>
+        </div>
+      </div>
+      <!--TP5-->
+      <div class="row">
+        <div class="col s12">
+          <h4 class="white-text center-align">TP5: Juego con clases</h4>
+        </div>
+      </div>
+      <div class="frame">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/66Mr-UPTIbQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="row">
+      <div class="col s10 offset-s1">
+      <ul class="collapsible expandable">
+        <li>
+          <div class="collapsible-header">Info</div>
+          <div class="collapsible-body cola">wasd</div>
+        </li>
+        <li>
+          <div class="collapsible-header">Código</div>
+          <div class="collapsible-body cola">
+            <ul class="collapsible expandable">
+              <li>
+                <div class="collapsible-header">tp5</div>
+                <div class="collapsible-body cola"><pre>/*Nombre: Germán Eloy Iñiguez
+  Número: 81697/3
+
+  Para moverte en el juego se usan las flechas direccionales
+  (las laterales para girar y las de arriba y aajo para avanzar y retroceder).
+  El objetivo del juego sería sería explorar el subsuelo que descubre el
+  personaje en las pantallas 20 y 31, así que esto vendría a reemplazar
+  las pantallas 21 y 32. Hay dos posibles finales en el juego:
+  que te encuentres con el bicho y te ataque, o que no te encuentres con nada.
+  */
+
+import ddf.minim.*;
+
+Juego juego;
+
+void setup(){
+  size(800,600,P3D);
+  /*Es resizable, pero todo exceptuando los textos está programado con números
+  fijos Ya que al usar la cámara se renderiza en la ventana lo que se está
+  viendo desde la misma, así que el tamaño de la ventana no importa
+  (a menos que sea muy chica).*/
+  surface.setResizable(true);
+  textAlign(CENTER,CENTER);
+
+
+  /*Se pasa this de referencia para poder iniciaizar un objeto de la
+  clase Minim dentro de la clase Juego, ya que Minim pide
+  una referenca al PApplet, que es la clase base de los sketches*/
+  juego = new Juego(this);
+}
+
+void draw(){
+  juego.Dibujar();
+}
+
+void keyPressed(){
+  juego.Tecla_Presionada();
+}
+
+void keyReleased(){
+  juego.Tecla_Soltada();
+}
+
+void mousePressed(){
+  juego = new Juego(this);
+}</pre>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">Chobi</div>
+                <div class="collapsible-body cola"><pre>class Chobi {
+
+  int cooldown, frame, coolSon;
+  float rot, vel, rad, volumen;
+  PVector Pos, Vel, Dir;
+  PShape Formita;
+  AudioPlayer Arrastre;
+
+  Chobi(Terreno terreno, Minim minim) {
+    rad = 20;
+    Pos = new PVector(terreno.tamX/2, terreno.tamY/2);
+    vel = .2;
+    Vel = new PVector(0, 0);
+    Dir = new PVector(0, 0);
+    rot = radians(random(360));
+    cooldown = 240;
+    coolSon = 100;
+    volumen = 0;
+    frame = 0;
+    Arrastre = minim.loadFile("Sonidos/Arrastre.wav");
+    Formita = loadShape("Chobi.obj");
+    Formita.scale(10);
+    Formita.rotateX(PI);
+  }
+
+  /*Casi todo el Bicho funciona exactametne igual que el Player,
+  copié la misma clase y la asigné el cooldown para que cada tanto tiempo
+  se cambie el ángulo de movimiento por uno random.*/
+  void Update(Rectangulo[] rec, Terreno terreno, Player PJ) {
+    if (Arrastre.position() == Arrastre.length()){Arrastre.rewind();}
+    Mover();
+    Colision(rec);
+    Colision_Terreno(terreno);
+    /*Acá está la única gran diferencia con la calse Player.
+      Dependiendo de la distancia que tenga el
+      Bicho con el jugador el sonido de
+      arrastre va a sonar más o menos fuerte.
+
+      No quería hacer una interfaz visual,
+      además de que me parecía que rompía la poca
+      ambientación que intenté generar,
+      así que mientras más cerca tenga el jugador al
+      Bicho, más fuerte va a sonar el arrastre*/
+    if (frameCount%coolSon == 0){Arrastre.play();}
+    if(dist(Pos.x,Pos.y,PJ.Pos.x,PJ.Pos.y) < rad*20){
+      volumen = map(dist(Pos.x,Pos.y,PJ.Pos.x,PJ.Pos.y),rad*20,0,-50,10);
+    }else{volumen = -50;}
+    Arrastre.setGain(volumen);
+
+    frame += 1;
+    if (frame == cooldown) {
+      rot = radians(random(360));
+      frame = 0;
+    }
+  }
+
+  void Mostrar() {
+    push();
+      fill(255);
+      noStroke();
+      translate(Pos.x,358,Pos.y);
+      shape(Formita);
+    pop();
+  }
+
+  void Mover() {
+    Dir.x = cos(rot)*vel;
+    Dir.y = sin(rot)*vel;
+    this.Vel.add(Dir);
+    this.Pos.add(Vel);
+    this.Vel.mult(.2);
+    this.Vel.mult(.75);
+  }
+
+  void Colision(Rectangulo[] rect) {
+    for (int re=0; re < rect.length; re++) {
+      for (int i = 0; i < rect[re].tamY/2-rad/2; i++) {
+        if ((dist(Pos.x, Pos.y, rect[re].x-rect[re].tamX/2, rect[re].y+i)
+         <= rad) || (dist(Pos.x, Pos.y, rect[re].x-rect[re].tamX/2,
+          rect[re].y-i) <= rad)) {
+          Pos.x = rect[re].x-rect[re].tamX/2-rad;
+        } else if ((dist(Pos.x, Pos.y, rect[re].x+rect[re].tamX/2,
+        rect[re].y+i)<= rad) || (dist(Pos.x, Pos.y, rect[re].x+rect[re].tamX/2,
+          rect[re].y-i) <= rad)) {
+          Pos.x = rect[re].x+rect[re].tamX/2+rad;
+        }
+      }
+      for (int i=0; i < rect[re].tamX/2-rad/2; i++) {
+        if ((dist(Pos.x, Pos.y, rect[re].x+i, rect[re].y-rect[re].tamY/2)
+         <= rad) || (dist(Pos.x, Pos.y, rect[re].x-i,
+          rect[re].y-rect[re].tamY/2) <= rad)) {
+          Pos.y = rect[re].y-rect[re].tamY/2-rad;
+        } else if ((dist(Pos.x, Pos.y, rect[re].x+i,
+        rect[re].y+rect[re].tamY/2)<= rad) || (dist(Pos.x, Pos.y, rect[re].x-i,
+          rect[re].y+rect[re].tamY/2) <= rad)) {
+          Pos.y = rect[re].y+rect[re].tamY/2+rad;
+        }
+      }
+    }
+  }
+
+  void Colision_Terreno(Terreno terreno){
+    if (Pos.x < 0+rad){Pos.x=0+rad;}
+    if (Pos.x > terreno.tamX-rad){Pos.x=terreno.tamX-rad;}
+    if (Pos.y < 0+rad){Pos.y=0+rad;}
+    if (Pos.y > terreno.tamY-rad){Pos.y=terreno.tamY-rad;}
+  }
+
+}</pre>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">Player</div>
+                <div class="collapsible-body cola"><pre>class Player {
+  AudioPlayer Corazon;
+  boolean M_Ad, M_At, R_Iz, R_Der;
+  float rot, rotCam, vel, rad, angBicho;
+  PVector Pos, Vel, Dir, Cam_Pos;
+  float Dis;
+  int tiempo, coolSon;
+
+  Player(Terreno terreno, Minim minim) {
+    M_Ad = false;
+    M_At = false;
+    R_Iz = false;
+    R_Der = false;
+    rad = 10;
+    Pos = new PVector(terreno.tamX/2, rad);
+    vel = .5;
+    Vel = new PVector(0, 0);
+    Dir = new PVector(0, 0);
+    rot = 0;
+    Dis = -rad;
+    tiempo = 0;
+    coolSon = 60;
+    Corazon = minim.loadFile("Sonidos/Corazon.wav");
+    Corazon.setGain(40);
+  }
+
+  void Update(Rectangulo[] rec, Terreno terreno) {
+    Mover();
+    Colision(rec);
+    Colision_Terreno(terreno);
+
+    //Cámara
+    /*Define la perspectiva:
+      FOV: 90 grados (lo estandar en juegos en primera persona de PC)
+
+      Relación de aspecto: 720p (es una relación maso menos estandar
+      actualmente, pero la elegí porque si ponía la relació 640/480,
+      al agrandar la pantalla se renderizaba todo en esa resolución
+      en la esquina inferior izquierda, dejando todo lo demás en negro)
+
+      Clipping Plane (near): El punto en el que la cámara empieza a ver es
+      a su posición sumada a la mitad del radio de colisión.
+      Si lo ponía más cerca podía generar problemas y ver detrás de algunas
+      paredes si las tenía a las espaldas
+
+      Clipping Plane (far): Distancia máxima a la que la cámara renderiza lo
+      que ve. Es una distancia medio corta porque quería que se viera poco,
+      pero los efectos de luz no funcionan cuando uso texturas porque los
+      shaders estándar de Processing no están programados para eso, así que
+      limité bastante la distancia de dibujado para generar el efecto más
+      parecido que pude*/
+    perspective(HALF_PI, 1280/720, rad/2, rad*15);
+
+    //Normaliza el valor del ángulo de rotación
+    //para que no se haga demasiado alto
+    if(rot>radians(360)){rot-=radians(360);}
+    if(rot < radians(0)){rot+=radians(360);}
+    rotCam = rot;
+
+    /*Pongo la cámara mirando a la posición del vector Pos,
+    pero la posiciono un poco atrás de esos valores para que se
+    genere la rotación bien (si ponía la posición e la cámara y el
+    punto al que mira en las mismas coordenadas generaba roblemas y la
+    cámara no rotaba)*/
+    Cam_Pos = new PVector(Dis*cos(rotCam)+Pos.x, 300, Dis*sin(rotCam)+Pos.y);
+    camera(Cam_Pos.x, Cam_Pos.y, Cam_Pos.z, Pos.x, Cam_Pos.y, Pos.y, 0, 1, 0);
+
+    //sonido
+    /*Si el sonido Corazon se termina de reproducir,
+    se vuelve a la posición de inicio para que esté preparado nuevamente*/
+    if (Corazon.position() == Corazon.length()){Corazon.rewind();}
+    /*Cada segundo tiempo se aumenta en 1, y para usar los latidos
+    de referencia para el tiempo que falta hice que en momentos
+    específicos se reproduzca cada vez más seguido*/
+    if(frameCount%60 == 0){tiempo++;}
+    switch(tiempo){
+      case 20:
+        coolSon = 30;
+      break;
+      case 40:
+        coolSon = 15;
+      break;
+      case 50:
+        coolSon = 5;
+      break;
+    }
+    if (frameCount%coolSon == 0){Corazon.play();}
+  }
+
+  /*Uso el mismo algoritmo para el movimiento que el que usé para el Pong;
+  lo único que acá las flechas de los costados cambian el ángulo de visión,
+  y las flechas de arriba y abajo avanzan o retroceden según la dirección
+  del ángulo*/
+  void Mover() {
+    if (R_Iz) {
+      rot-=radians(2);
+    }
+    if (R_Der) {
+      rot+=radians(2);
+    }
+    Dir.x = cos(rot)*vel;
+    Dir.y = sin(rot)*vel;
+    if (M_Ad) {
+      this.Vel.add(Dir);
+    }
+    if (M_At) {
+      this.Vel.sub(Dir);
+    }
+    this.Pos.add(Vel);
+    /*La verdad que esto no me acuerdo por qué está así, lo saqué de un
+    proyecto anterior que era una copia de Asteroids, así que supongo
+    que debe ser para manejar la fricción y que la nave desacelere de a poco,
+    pero con la velocidad tan baja como acá no se nota
+    (igual por las dudas no lo saco)*/
+    this.Vel.mult(.2);
+    this.Vel.mult(.75);
+  }
+
+/*Para la colisión uso el mismo algoritmo que usé para el
+de la pelota en el Pong, sólo que acá también toma en cuenta
+los lados puestos sobre X.
+
+A pesar que todo se renderiza en 3D, las colisiones
+y movimientos están hechos en 2D, por eso en varios translate,
+la variable Y del vector de posición es asignada a la
+posición en Z del translate*/
+  void Colision(Rectangulo[] rect) {
+    for (int re=0; re < rect.length; re++) {
+      for (int i = 0; i < rect[re].tamY/2-rad/2; i++) {
+        if ((dist(Pos.x, Pos.y, rect[re].x-rect[re].tamX/2,
+         rect[re].y+i) <= rad) || (dist(Pos.x, Pos.y,
+          rect[re].x-rect[re].tamX/2, rect[re].y-i) <= rad)) {
+          Pos.x = rect[re].x-rect[re].tamX/2-rad;
+        } else if ((dist(Pos.x, Pos.y, rect[re].x+rect[re].tamX/2,
+         rect[re].y+i) <= rad) || (dist(Pos.x, Pos.y,
+          rect[re].x+rect[re].tamX/2, rect[re].y-i) <= rad)) {
+          Pos.x = rect[re].x+rect[re].tamX/2+rad;
+        }
+      }
+      for (int i=0; i < rect[re].tamX/2-rad/2; i++) {
+        if ((dist(Pos.x, Pos.y, rect[re].x+i, rect[re].y-rect[re].tamY/2)
+         <= rad) || (dist(Pos.x, Pos.y, rect[re].x-i,
+          rect[re].y-rect[re].tamY/2) <= rad)) {
+          Pos.y = rect[re].y-rect[re].tamY/2-rad;
+        } else if ((dist(Pos.x, Pos.y, rect[re].x+i,
+         rect[re].y+rect[re].tamY/2) <= rad) || (dist(Pos.x, Pos.y,
+          rect[re].x-i, rect[re].y+rect[re].tamY/2) <= rad)) {
+          Pos.y = rect[re].y+rect[re].tamY/2+rad;
+        }
+      }
+    }
+  }
+
+  /*Esto es mucho más básico que la colisión con los rectángulos
+    Si el objeto se pasa en X se lo pone al borde, y lo mismo para Y*/
+  void Colision_Terreno(Terreno terreno){
+    if (Pos.x < 0+rad){Pos.x=0+rad;}
+    if (Pos.x>terreno.tamX-rad){Pos.x=terreno.tamX-rad;}
+    if (Pos.y < 0+rad){Pos.y=0+rad;}
+    if (Pos.y>terreno.tamY-rad){Pos.y=terreno.tamY-rad;}
+  }
+
+  /*Funciones para cambiar las booleanas del
+  movimiento para que no ocurran problemas al
+  cambiar muy rápico las teclas que se tocan
+  para moverse, o si se tocan varias*/
+  void Det_Key_Press() {
+    if (keyCode == UP) {
+      M_Ad = true;
+    }
+    if (keyCode == DOWN) {
+      M_At = true;
+    }
+    if (keyCode == RIGHT) {
+      R_Der = true;
+    }
+    if (keyCode == LEFT) {
+      R_Iz = true;
+    }
+  }
+
+  void Det_Key_Rel() {
+    if (keyCode == UP) {
+      M_Ad = false;
+    }
+    if (keyCode == DOWN) {
+      M_At = false;
+    }
+    if (keyCode == RIGHT) {
+      R_Der = false;
+    }
+    if (keyCode == LEFT) {
+      R_Iz = false;
+    }
+  }
+
+}</pre>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">Juego</div>
+                <div class="collapsible-body cola"><pre>class Juego{
+
+  Minim minim;
+  Terreno terreno;
+  Player PJ;
+  Chobi Bicho;
+  boolean termino;
+  int fin;
+
+  Juego(PApplet Jorge){
+    termino = false;
+    minim = new Minim (Jorge);
+    terreno = new Terreno(1000,1000);
+    terreno.Armar();
+    PJ = new Player(terreno, minim);
+    Bicho = new Chobi(terreno, minim);
+  }
+
+  void Dibujar(){
+     /*La variable termino indica si se llegó a algún final,
+     si no es así, se actualizan y se muestran el terreno y el monstruo,
+     sino, se muestra un fondo negro con un texto relativo al final que
+     se obtuvo en medio de la pantalla*/
+    background(0);
+      if(!termino){
+        Bicho.Update(terreno.recta, terreno, PJ);
+        PJ.Update(terreno.recta, terreno);
+
+        terreno.Mostrar();
+        Bicho.Mostrar();
+
+
+        /*Con esto se define el final. Si pasó másd e un minuto
+        y el jugador no se encontró con el monstruo sale el final 1,
+        en caso de que se haya acercado demasiado al monstruo,
+        sale el final 2*/
+        if (PJ.tiempo == 60){fin = 1; termino = true;}
+        if(dist(Bicho.Pos.x,Bicho.Pos.y,PJ.Pos.x,PJ.Pos.y)<= PJ.rad*12)
+        {fin = 2; termino = true;}
+
+      }else{
+        finales();
+      }
+  }
+
+  void finales(){
+    /*Se reinician la perpectiva y la cámara para que el texto pueda
+      aparecer sin probleams*/
+    perspective();
+    camera();
+    if (fin == 1){text("Al final no había nada",width/2,height/2);}
+    if (fin == 2){text("El miedo te paralizó y el ser aprovechó para atacarte",
+    width/2,height/2);}
+  }
+
+  void Tecla_Presionada(){
+    PJ.Det_Key_Press();
+  }
+
+  void Tecla_Soltada(){
+    PJ.Det_Key_Rel();
+  }
+
+}</pre>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">Terreno</div>
+                <div class="collapsible-body cola"><pre>class Terreno {
+  Rectangulo[] recta;
+  float tamX, tamY;
+  PVector pos;
+
+  Terreno(float X, float Y) {
+    tamX = X;
+    tamY = Y;
+    recta = new Rectangulo[21];
+  }
+
+  void Armar() {
+
+    //Rectangulos hardcodeados
+    /*Intenté hacer que los rectángulos se generaran de forma
+      maso menos randomizada, pero no funcionó.
+      Haciendo una grilla se generaban demasiados rectángulos
+      y el framerate caía bajo tierra.
+      Y haciéndolo completamente random obviamente podía pasar
+      que quedaran espacios vacía o que se generaran rectángulos
+      muy grandes o muy pequeños, o incluso que el personaje  y el monstruo
+      aparecieran dentro de un rectángulo*/
+    recta[0] = new Rectangulo(150,100,100,200);
+    recta[1] = new Rectangulo(300,100,100,200);
+    recta[2] = new Rectangulo(450,100,100,200);
+    recta[3] = new Rectangulo(600,100,100,200);
+    recta[4] = new Rectangulo(750,100,100,200);
+    recta[5] = new Rectangulo(900,100,100,200);
+
+    recta[6] = new Rectangulo(100,500,100,200);
+    recta[7] = new Rectangulo(250,500,100,200);
+    recta[8] = new Rectangulo(400,500,100,200);
+    recta[9] = new Rectangulo(650,500,100,200);
+    recta[10] = new Rectangulo(700,500,100,200);
+    recta[11] = new Rectangulo(950,500,100,200);
+
+    recta[12] = new Rectangulo(150,900,100,200);
+    recta[13] = new Rectangulo(300,900,100,200);
+    recta[14] = new Rectangulo(450,900,100,200);
+    recta[15] = new Rectangulo(600,900,100,200);
+    recta[16] = new Rectangulo(750,900,100,200);
+    recta[17] = new Rectangulo(900,900,100,200);
+
+    recta[18] = new Rectangulo(500,300,900,100);
+
+    recta[19] = new Rectangulo(150,700,300,100);
+    recta[20] = new Rectangulo(850,700,300,100);
+
+    for (int i=0; i < recta.length; i++){recta[i].Armar();}
+  }
+
+  void Mostrar() {
+    for (int i=0; i < recta.length; i++) {
+      recta[i].Mostrar();
+    }
+    push();
+    translate(tamX/2, 300, tamY/2);
+    stroke(0);
+    strokeWeight(5);
+    fill(64);
+    box(tamX, 100, tamY);
+    pop();
+  }
+}</pre>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">Rectangulos</div>
+                <div class="collapsible-body cola"><pre>class Rectangulo {
+
+  float tamX, tamY, x, y, alto;
+  PShape Formita;
+  PImage Tex;
+
+  /*Se le pasan al Rectángulo las posiciones y los tamaños en X e Y
+  que va a tener*/
+  Rectangulo(float posX, float posY, float tX, float tY) {
+    tamX = tX;
+    tamY = tY;
+    x = posX;
+    y= posY;
+    alto = 600;
+  }
+
+  /*Para armar al Rectángulo copié el código de un proyecto anterior.
+    Lo que hace es tomar la posición (X,Y)
+    y la mitad de la altura como centro para armar las 6 caras de un cubo
+    en base a esas posiciones. Caras que después
+    une como childs en un grupo de formas llamado Formita.
+
+    los vértices tienen 5 parámetro, poruqe los últimos 2 son los vértices UV,
+    que definen que pixel de la textura va a tener asignado ese vértice.
+    Acá están normalizados, así que sin importar la resolución de
+    la textura que se le asigne, se va a asignar igual a cada esquina
+    de la shape.
+
+    Con los UV normalizados, una imagen de, por ejemplo, 800x600,
+    pasaría de tener que ser asignada con los vértices
+    (0,0)(800,0)(800,600)(0,600)(0,0) para encajarla
+    perfectamente con la shape, a tener que ser asignada con los vérices
+    (0,0)(1,0)(1,1)(0,1)(0,0)*/
+  void Armar() {
+    Formita = createShape(GROUP);
+    Tex = loadImage("tex.png");
+
+    PShape Car_Tra=createShape();
+    Car_Tra.beginShape(QUAD);
+    Car_Tra.textureMode(NORMAL);
+    Car_Tra.texture(Tex);
+    Car_Tra.vertex(-tamX/2, 0, -tamY/2, 0, 0);
+    Car_Tra.vertex(tamX/2, 0, -tamY/2, 0, 1);
+    Car_Tra.vertex(tamX/2, alto, -tamY/2, 1, 1);
+    Car_Tra.vertex(-tamX/2, alto, -tamY/2, 1, 0);
+    Car_Tra.endShape();
+
+    PShape Car_Iz=createShape();
+    Car_Iz.beginShape(QUAD);
+    Car_Iz.textureMode(NORMAL);
+    Car_Iz.texture(Tex);
+    Car_Iz.vertex(-tamX/2, 0, tamY/2, 0, 0);
+    Car_Iz.vertex(-tamX/2, alto, tamY/2, 0, 1);
+    Car_Iz.vertex(-tamX/2, alto, -tamY/2, 1, 1);
+    Car_Iz.vertex(-tamX/2, 0, -tamY/2, 1, 0);
+    Car_Iz.endShape();
+
+    PShape Car_Sup=createShape();
+    Car_Sup.beginShape(QUAD);
+    Car_Sup.textureMode(NORMAL);
+    Car_Sup.texture(Tex);
+    Car_Sup.vertex(-tamX/2, 0, tamY/2, 0, 0);
+    Car_Sup.vertex(tamX/2, 0, tamY/2, 0, 1);
+    Car_Sup.vertex(tamX/2, 0, -tamY/2, 1, 1);
+    Car_Sup.vertex(-tamX/2, 0, -tamY/2, 1, 0);
+    Car_Sup.endShape();
+
+    PShape Car_Der=createShape();
+    Car_Der.beginShape(QUAD);
+    Car_Der.textureMode(NORMAL);
+    Car_Der.texture(Tex);
+    Car_Der.vertex(tamX/2, 0, tamY/2, 0, 0);
+    Car_Der.vertex(tamX/2, alto, tamY/2, 0, 1);
+    Car_Der.vertex(tamX/2, alto, -tamY/2, 1, 1);
+    Car_Der.vertex(tamX/2, 0, -tamY/2, 1, 0);
+    Car_Der.endShape();
+
+    PShape Car_Inf=createShape();
+    Car_Inf.beginShape(QUAD);
+    Car_Inf.textureMode(NORMAL);
+    Car_Inf.texture(Tex);
+    Car_Inf.vertex(tamX/2, alto, tamY/2, 0, 0);
+    Car_Inf.vertex(-tamX/2, alto, tamY/2, 0, 1);
+    Car_Inf.vertex(-tamX/2, alto, -tamY/2, 1, 1);
+    Car_Inf.vertex(tamX/2, alto, -tamY/2, 1, 0);
+    Car_Inf.endShape();
+
+    PShape Car_Del=createShape();
+    Car_Del.beginShape(QUAD);
+    Car_Del.textureMode(NORMAL);
+    Car_Del.texture(Tex);
+    Car_Del.vertex(-tamX/2, alto, tamY/2, 0, 0);
+    Car_Del.vertex(-tamX/2, 0, tamY/2, 0, 1);
+    Car_Del.vertex(tamX/2, 0, tamY/2, 1, 1);
+    Car_Del.vertex(tamX/2, alto, tamY/2, 1, 0);
+    Car_Del.endShape();
+
+    Formita.addChild(Car_Tra);
+    Formita.addChild(Car_Iz);
+    Formita.addChild(Car_Sup);
+    Formita.addChild(Car_Der);
+    Formita.addChild(Car_Inf);
+    Formita.addChild(Car_Del);
+  }
+
+  void Mostrar() {
+    pushMatrix();
+    translate(x, 0, y);
+    shape(Formita);
+    popMatrix();
+  }
+}</pre>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
     </div>
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
