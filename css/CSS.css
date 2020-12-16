@@ -24,3 +24,15 @@ body{
   text-align: center;
   vertical-align: middle;
 }
+
+.link{
+  display: inline-block;
+  text-decoration: none;
+  color: #000000;
+}
+
+.link:hover{
+  display: inline-block;
+  text-decoration: none;
+  color: #007070;
+}
