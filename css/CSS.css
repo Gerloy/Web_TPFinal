@@ -36,3 +36,15 @@ body{
   text-decoration: none;
   color: #007070;
 }
+
+.link2{
+  display: inline-block;
+  text-decoration: none;
+  color: #FFFFFF;
+}
+
+.link2:hover{
+  display: inline-block;
+  text-decoration: none;
+  color: #007070;
+}
